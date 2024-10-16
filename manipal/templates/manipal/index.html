@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipal Hospital Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            margin: 20px 0;
+        }
+        nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        .hero {
+            background: url("{% static 'manipal/images/manipal-hospital.jpg' %}") no-repeat center center/cover;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        .content {
+            padding: 20px;
+        }
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Manipal Hospital</h1>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#contact">Contact</a>
+            <a href="#location" id="location-btn">Location</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1></h1>
+    </div>
+
+    <div class="content">
+        <section id="about">
+            <h2>About Us</h2>
+            <p>We are dedicated to providing the best services to our customers...</p>
+        </section>
+
+        <section id="services">
+            <h2>Our Services</h2>
+            <ul>
+                <li>Service One</li>
+                <li>Service Two</li>
+                <li>Service Three</li>
+            </ul>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>If you have any questions, feel free to reach out to us!</p>
+            <p>Email: <a href="mailto:manipalhospitals@gmail.com">info@example.com</a></p>
+        </section>
+    </div>
+
+    <!-- Modal for locations -->
+    <div id="location-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-modal">&times;</span>
+            <h2>Hi There!</h2>
+            <h2>Help us get you at the closest doctor.</h2>
+            <h3>Choose your nearest Hospital</h3>
+            <form id="location-form">
+                <select id="location-select" name="location">
+                    <!-- Options will be populated via JavaScript -->
+                </select>
+            <div>    
+            <button type="button" id="proceed-button">Proceed</button>
+            </div>    
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Manipal Hospital Website. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById("location-btn").onclick = function(event) {
+            event.preventDefault(); // Prevent the default anchor behavior
+            document.getElementById("location-modal").style.display = "block";
+            loadLocations(); // Load locations when modal is opened
+        }
+    
+        document.getElementById("close-modal").onclick = function() {
+            document.getElementById("location-modal").style.display = "none";
+        }
+        document.getElementById("proceed-button").onclick = function() {
+            const selectedLocation = document.getElementById('location-select').value;
+            if (selectedLocation) {
+                // Redirect to a new page with the selected location (you can customize the URL)
+                window.location.href = `page?location=${encodeURIComponent(selectedLocation)}`; // Adjust this URL as needed
+                // Adjust this URL as needed
+            } else {
+                alert("Please select a location.");
+            }
+        }
+    
+        window.onclick = function(event) {
+            if (event.target == document.getElementById("location-modal")) {
+                document.getElementById("location-modal").style.display = "none";
+            }
+        }
+    
+        function loadLocations() {
+            fetch('http://127.0.0.1:8000/api/locations/?format=json') // Ensure this matches your API endpoint
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Check data in the console
+                    const select = document.getElementById('location-select');
+                    data.forEach(location => {
+                        const option = document.createElement('option');
+                        option.value = location.id; // or location.locationname if you need it
+                        option.textContent = location.locationname;
+                        select.appendChild(option);
+                    });
+                });
+        }
+    </script>
+    
+</body>
+</html>

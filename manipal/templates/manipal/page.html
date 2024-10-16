@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipal Hospital</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .content {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Manipal Website</h1>
+    <h2>
+         <span id="selected-location">
+            {{ location_name | default:"None selected" }}
+        </span>
+    </h2>
+    
+</header>
+
+<div class="content">
+    <h2>Select Your Options</h2>
+
+    <!-- Dropdown Menu for Specialities -->
+    <label for="options">Select Speciality</label>
+    <select id="options">
+        <option value="">--Speciality--</option>
+        {% for speciality in specialities %}
+            <option value="{{ speciality.name }}">{{ speciality.name }}</option>
+        {% endfor %}
+    </select>
+
+    <!-- Date and Time Input -->
+    <label for="datetime">Select Date and Time:</label>
+    <input type="datetime-local" id="datetime">
+
+    <!-- Dropdown for Locations -->
+    <label for="location-select">Select Location:</label>
+    <select id="location-select">
+        <option value="">--Select Location--</option>
+        {% for location in locations %}
+            <option value="{{ location.id }}" {% if location_name == location.locationname %}selected{% endif %}>
+                {{ location.locationname }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button onclick="displayInfo()">Submit</button>
+
+    <div id="output" style="margin-top: 20px;"></div>
+</div>
+
+<script>
+    function displayInfo() {
+        const selectedOption = document.getElementById('options').value;
+        const datetime = document.getElementById('datetime').value;
+        const locationSelect = document.getElementById('location-select');
+        const selectedLocation = locationSelect.options[locationSelect.selectedIndex].text;
+        let formattedDateTime = 'Not selected';
+        if (datetime) {
+            const date = new Date(datetime);
+            const options = { 
+               year: 'numeric', 
+               month: 'long', 
+               day: 'numeric', 
+               hour: '2-digit', 
+               minute: '2-digit', 
+               hour12: true 
+        };
+        formattedDateTime = date.toLocaleString('en-US', options);
+    }
+
+        let output = '<h3>Your Selections:</h3>';
+        output += `<p>Selected Option: ${selectedOption || 'None selected'}</p>`;
+        output += `<p>Selected Date and Time: ${formattedDateTime}</p>`;
+        {% comment %} output += `<p>Selected Date and Time: ${datetime || 'Not selected'}</p>`; {% endcomment %}
+        output += `<p>Location: ${selectedLocation || 'Not provided'}</p>`;
+
+        document.getElementById('output').innerHTML = output;
+    }
+</script>
+
+</body>
+</html>
